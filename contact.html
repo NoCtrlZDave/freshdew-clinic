@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Us - Freshdew Children Clinic</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Leaflet CSS for Map (Alternative to Google Maps with better free tier) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-soft: #eff6ff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --bg-muted: #f1f5f9;
+            --border: #e2e8f0;
+            --radius: 16px;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            color: var(--text-dark);
+            background: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--radius);
+            display: block;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ================= FIXED NAV BAR ================= */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav {
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            z-index: 1001;
+        }
+
+        .logo span {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        /* Desktop Navigation */
+        .desktop-nav {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .desktop-nav ul {
+            list-style: none;
+            display: flex;
+            gap: 24px;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin: 0;
+            padding: 0;
+        }
+
+        .desktop-nav ul li {
+            cursor: pointer;
+            transition: color 0.3s ease;
+            padding: 8px 0;
+            position: relative;
+        }
+
+        .desktop-nav ul li:hover {
+            color: var(--primary);
+        }
+
+        .desktop-nav ul li::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .desktop-nav ul li:hover::after {
+            width: 100%;
+        }
+
+        .desktop-nav ul li a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Mobile Menu Button */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            padding: 8px;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 24px;
+            height: 3px;
+            background: var(--text-dark);
+            border-radius: 2px;
+            transition: 0.3s;
+            display: block;
+        }
+
+        /* Mobile Navigation Menu */
+        .mobile-nav {
+            position: fixed;
+            top: 72px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 72px);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px 20px;
+            gap: 20px;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .mobile-nav.active {
+            transform: translateX(0);
+        }
+
+        .mobile-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        .mobile-nav ul li {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s ease;
+            padding: 12px 0;
+            width: 100%;
+            text-align: center;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        .mobile-nav ul li:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-nav ul li:hover {
+            color: var(--primary);
+        }
+
+        .mobile-nav ul li a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+        .mobile-appointment-btn {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 300px;
+            padding: 15px;
+            font-size: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-appointment-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        /* Main content spacing for fixed nav */
+        main {
+            padding-top: 72px;
+        }
+
+        /* ================= CONTACT HERO ================= */
+        .contact-hero {
+            background: linear-gradient(135deg, var(--primary-soft) 0%, var(--bg-light) 100%);
+            padding: 80px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=1200&auto=format&fit=crop") center/cover no-repeat;
+            opacity: 0.1;
+        }
+
+        .contact-hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .contact-hero h1 {
+            font-size: 3.2rem;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+        }
+
+        .contact-hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 30px;
+            line-height: 1.8;
+        }
+
+        .contact-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn.primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+        }
+
+        .action-btn.secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ================= CONTACT GRID ================= */
+        .contact-grid {
+            padding: 80px 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+        }
+
+        /* Contact Information */
+        .contact-info h2 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .contact-info>p {
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        .info-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .info-card {
+            background: var(--bg-light);
+            padding: 30px;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--primary);
+            transition: transform 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateX(5px);
+        }
+
+        .info-card i {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .info-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .info-card p {
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            line-height: 1.6;
+        }
+
+        .info-card a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .info-card a:hover {
+            color: #1d4ed8;
+            text-decoration: underline;
+        }
+
+        /* Emergency Notice */
+        .emergency-notice {
+            background: linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%);
+            border: 2px solid #fecaca;
+            border-radius: var(--radius);
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .emergency-icon {
+            width: 60px;
+            height: 60px;
+            background: #ef4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .emergency-icon i {
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .emergency-content h4 {
+            color: #dc2626;
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+
+        .emergency-content p {
+            color: #7f1d1d;
+            margin-bottom: 10px;
+        }
+
+        .emergency-phone {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #dc2626;
+            text-decoration: none;
+        }
+
+        /* Contact Form */
+        .contact-form-container {
+            background: white;
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .contact-form-container h3 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+        }
+
+        .contact-form-container>p {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .required::after {
+            content: '*';
+            color: var(--error);
+            margin-left: 4px;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .privacy-note {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            max-width: 300px;
+        }
+
+        .privacy-note a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .privacy-note a:hover {
+            text-decoration: underline;
+        }
+
+        .success-message {
+            background: var(--success);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .error-message {
+            background: var(--error);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ================= MAP SECTION ================= */
+        .map-section {
+            padding: 0 0 80px 0;
+        }
+
+        .map-container {
+            height: 500px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            z-index: 1000;
+        }
+
+        .map-overlay h4 {
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .map-overlay p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        /* ================= FAQ SECTION ================= */
+        .faq-section {
+            padding: 80px 0;
+            background: var(--bg-light);
+        }
+
+        .faq-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .faq-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+        }
+
+        .faq-header p {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        .faq-grid {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: var(--radius);
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        .faq-question {
+            padding: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: var(--bg-muted);
+        }
+
+        .faq-question i {
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            padding: 0 25px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        .faq-item.active .faq-answer {
+            padding: 0 25px 25px 25px;
+            max-height: 500px;
+        }
+
+        /* ================= FOOTER ================= */
+        footer {
+            padding: 50px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            font-size: 0.85rem;
+        }
+
+        footer h4 {
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        footer p,
+        footer a {
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* ================= RESPONSIVE ================= */
+        @media (max-width: 1200px) {
+            .nav {
+                padding: 0 30px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .desktop-nav ul {
+                gap: 18px;
+            }
+
+            .desktop-btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .desktop-nav {
+                display: none;
+            }
+
+            .mobile-nav {
+                display: flex;
+            }
+
+            .contact-hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .contact-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .action-btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+
+            .contact-info h2 {
+                font-size: 2rem;
+            }
+
+            .contact-form-container {
+                padding: 30px 20px;
+            }
+
+            .map-container {
+                height: 400px;
+            }
+
+            .map-overlay {
+                position: relative;
+                top: 0;
+                left: 0;
+                margin-bottom: 20px;
+                max-width: 100%;
+            }
+
+            .faq-header h2 {
+                font-size: 2rem;
+            }
+
+            .form-footer {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .privacy-note {
+                max-width: 100%;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .emergency-notice {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .emergency-icon {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav {
+                padding: 0 15px;
+            }
+
+            .logo {
+                font-size: 1.1rem;
+            }
+
+            .contact-hero h1 {
+                font-size: 2rem;
+            }
+
+            .contact-hero p {
+                font-size: 1rem;
+            }
+
+            .info-card {
+                padding: 20px;
+            }
+
+            .mobile-appointment-btn {
+                padding: 12px;
+            }
+
+            .faq-question {
+                padding: 20px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Hamburger Animation */
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* Prevent body scroll when menu is open */
+        body.menu-open {
+            overflow: hidden;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="nav">
+            <a href="index.html" class="logo"><span>＋</span> Freshdew Children Clinic</a>
+
+            <!-- Desktop Navigation -->
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="contact.html" style="color: var(--primary);">Contact</a></li>
+                </ul>
+                <button class="btn desktop-btn">Book Appointment</button>
+            </nav>
+
+            <!-- Mobile Menu Button -->
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div class="mobile-nav" id="mobileNav">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="contact.html" style="color: var(--primary);">Contact</a></li>
+            </ul>
+            <button class="mobile-appointment-btn" id="mobileAppointmentBtn">Book Appointment</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- CONTACT HERO -->
+        <section class="contact-hero">
+            <div class="contact-hero-content">
+                <h1>Get in Touch With Us</h1>
+                <p>We're here to answer your questions, schedule appointments, and provide the best pediatric care for
+                    your child. Reach out to us through any of the channels below.</p>
+                <div class="contact-actions">
+                    <a href="#contact-form" class="action-btn primary">
+                        <i class="fas fa-envelope"></i> Send a Message
+                    </a>
+                    <a href="tel:+2341234567890" class="action-btn secondary">
+                        <i class="fas fa-phone"></i> Call Now
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT GRID -->
+        <section class="container contact-grid">
+            <!-- Contact Information -->
+            <div class="contact-info">
+                <h2>Contact Information</h2>
+                <p>Feel free to reach out to us through any of the following channels. We typically respond within 24
+                    hours.</p>
+
+                <div class="info-cards">
+                    <div class="info-card">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h4>Visit Our Clinic</h4>
+                        <p><strong>Address:</strong> Road 5, New Owerri, Owerri 460281</p>
+                        <p><strong>Landmark:</strong> Opposite Sterling Bank, next to Glamour Supermarket</p>
+                        <p><strong>Parking:</strong> Ample parking space available</p>
+                    </div>
+
+                    <div class="info-card">
+                        <i class="fas fa-phone"></i>
+                        <h4>Call Us</h4>
+                        <p><strong>General Inquiries:</strong> <a href="tel:+2341234567890">+234 123 456 7890</a></p>
+                        <p><strong>Appointments:</strong> <a href="tel:+2341234567891">+234 123 456 7891</a></p>
+                        <p><strong>Fax:</strong> +234 123 456 7892</p>
+                    </div>
+
+                    <div class="info-card">
+                        <i class="fas fa-envelope"></i>
+                        <h4>Email Us</h4>
+                        <p><strong>General:</strong> <a href="mailto:care@freshdew.com">care@freshdew.com</a></p>
+                        <p><strong>Appointments:</strong> <a
+                                href="mailto:appointments@freshdew.com">appointments@freshdew.com</a></p>
+                        <p><strong>Billing:</strong> <a href="mailto:billing@freshdew.com">billing@freshdew.com</a></p>
+                    </div>
+                </div>
+
+                <!-- Emergency Notice -->
+                <div class="emergency-notice">
+                    <div class="emergency-icon">
+                        <i class="fas fa-ambulance"></i>
+                    </div>
+                    <div class="emergency-content">
+                        <h4>24/7 Emergency Services</h4>
+                        <p>For medical emergencies, please call our emergency line immediately:</p>
+                        <a href="tel:+2341234567899" class="emergency-phone">
+                            <i class="fas fa-phone"></i> +234 123 456 7899
+                        </a>
+                        <p><small>Available 24 hours a day, 7 days a week</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="contact-form-container" id="contact-form">
+                <h3>Send Us a Message</h3>
+                <p>Fill out the form below and we'll get back to you as soon as possible.</p>
+
+                <form id="contactForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName" class="required">First Name</label>
+                            <input type="text" id="firstName" name="firstName" required
+                                placeholder="Enter your first name">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName" class="required">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" required
+                                placeholder="Enter your last name">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="required">Email Address</label>
+                        <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone" class="required">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="+234 XXX XXX XXXX">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subject" class="required">Subject</label>
+                        <select id="subject" name="subject" required>
+                            <option value="" disabled selected>Select a subject</option>
+                            <option value="appointment">Book an Appointment</option>
+                            <option value="general">General Inquiry</option>
+                            <option value="billing">Billing Question</option>
+                            <option value="medical">Medical Question</option>
+                            <option value="feedback">Feedback/Suggestion</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message" class="required">Message</label>
+                        <textarea id="message" name="message" required
+                            placeholder="Please describe your inquiry in detail..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="newsletter" name="newsletter">
+                            Subscribe to our newsletter for health tips and clinic updates
+                        </label>
+                    </div>
+
+                    <div class="form-footer">
+                        <div class="privacy-note">
+                            By submitting this form, you agree to our <a href="#">Privacy Policy</a> and consent to
+                            being contacted by our team.
+                        </div>
+                        <button type="submit" class="btn" id="submitBtn">
+                            Send Message
+                        </button>
+                    </div>
+
+                    <div id="successMessage" class="success-message">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Thank you! Your message has been sent successfully. We'll get back to you within 24
+                            hours.</span>
+                    </div>
+
+                    <div id="errorMessage" class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Oops! Something went wrong. Please try again or contact us directly.</span>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- MAP SECTION -->
+        <section class="map-section container">
+            <h2 style="font-size: 2.2rem; margin-bottom: 20px;">Find Our Location</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px; max-width: 600px;">We're conveniently located in
+                New Owerri with easy access from all major areas. Use the interactive map below for directions.</p>
+
+            <div class="map-container">
+                <div id="map"></div>
+                <div class="map-overlay">
+                    <h4>Freshdew Children Clinic</h4>
+                    <p><i class="fas fa-map-marker-alt" style="color: var(--primary);"></i> Road 5, New Owerri</p>
+                    <p><i class="fas fa-clock" style="color: var(--primary);"></i> Mon-Fri: 8AM-8PM</p>
+                    <p><i class="fas fa-phone" style="color: var(--primary);"></i> +234 123 456 7890</p>
+                    <p><small>Free parking available at the rear of the building</small></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ SECTION -->
+        <section class="faq-section">
+            <div class="container">
+                <div class="faq-header">
+                    <h2>Frequently Asked Questions</h2>
+                    <p>Find quick answers to common questions about contacting us and our services.</p>
+                </div>
+
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            What are your clinic hours?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Our regular clinic hours are Monday to Friday from 8:00 AM to 8:00 PM, Saturdays from 9:00
+                            AM to 6:00 PM, and Sundays from 10:00 AM to 4:00 PM. We offer 24/7 emergency services for
+                            urgent pediatric cases.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Do I need an appointment?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            While appointments are recommended to minimize waiting time, we do accept walk-in patients.
+                            However, appointments receive priority scheduling. For same-day appointments, please call us
+                            at +234 123 456 7891.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            What should I bring to my child's first appointment?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Please bring your child's medical records, immunization card, any current medications, your
+                            insurance information (if applicable), and a list of any allergies or medical conditions.
+                            Arrive 15 minutes early to complete registration paperwork.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Do you accept health insurance?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes, we accept most major insurance plans including NHIS, and private insurance providers.
+                            Please contact our billing department at billing@freshdew.com or +234 123 456 7892 to verify
+                            your coverage before your visit.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Is parking available at your clinic?
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes, we have ample free parking available for patients and visitors. Our parking lot is
+                            located at the rear of the building with designated spaces for patients with disabilities.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container footer-grid">
+            <div>
+                <h4>Freshdew Children Clinic</h4>
+                <p>Professional pediatric outpatient clinic providing compassionate healthcare for children in Owerri
+                    and surrounding communities.</p>
+                <p>Rd 5, New Owerri, Owerri 460281</p>
+                <p>care@freshdew.com</p>
+                <p>+234 123 456 7890</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div>
+                <h4>Quick Links</h4>
+                <a href="index.html">Home</a>
+                <a href="about.html">About Us</a>
+                <a href="services.html">Services</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div>
+                <h4>Departments</h4>
+                <a>General Pediatrics</a>
+                <a>Immunizations</a>
+                <a>Emergency Care</a>
+                <a>Newborn Care</a>
+            </div>
+            <div>
+                <h4>Connect With Us</h4>
+                <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+                <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
+                <a href="#"><i class="fab fa-twitter"></i> Twitter</a>
+                <a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a>
+            </div>
+            <div>
+                <h4>Opening Hours</h4>
+                <a>Monday - Friday: 8:00 AM - 8:00 PM</a>
+                <a>Saturday: 9:00 AM - 6:00 PM</a>
+                <a>Sunday: 10:00 AM - 4:00 PM</a>
+                <a>Emergency Services: 24/7</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Leaflet JS for Map -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script>
+        // Mobile menu functionality
+        const hamburger = document.getElementById('hamburger');
+        const mobileNav = document.getElementById('mobileNav');
+        const mobileAppointmentBtn = document.getElementById('mobileAppointmentBtn');
+        const desktopBtn = document.querySelector('.desktop-btn');
+        const body = document.body;
+
+        hamburger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            hamburger.classList.toggle('active');
+            mobileNav.classList.toggle('active');
+            body.classList.toggle('menu-open');
+        });
+
+        // Close menu when clicking on a link
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav ul li');
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mobileNav.classList.remove('active');
+                body.classList.remove('menu-open');
+            });
+        });
+
+        // Appointment buttons
+        mobileAppointmentBtn.addEventListener('click', () => {
+            alert('Redirecting to appointment booking...');
+            hamburger.classList.remove('active');
+            mobileNav.classList.remove('active');
+            body.classList.remove('menu-open');
+        });
+
+        desktopBtn.addEventListener('click', () => {
+            alert('Redirecting to appointment booking...');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!mobileNav.contains(event.target) && !hamburger.contains(event.target)) {
+                hamburger.classList.remove('active');
+                mobileNav.classList.remove('active');
+                body.classList.remove('menu-open');
+            }
+        });
+
+        // Close menu on window resize if resized to larger screen
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                hamburger.classList.remove('active');
+                mobileNav.classList.remove('active');
+                body.classList.remove('menu-open');
+            }
+        });
+
+        // Initialize Map (Owerri, Nigeria coordinates)
+        document.addEventListener('DOMContentLoaded', function () {
+            // Coordinates for Owerri, Nigeria
+            const owerriCoords = [5.4836, 7.0333];
+
+            // Initialize map
+            const map = L.map('map').setView(owerriCoords, 14);
+
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Custom clinic icon
+            const clinicIcon = L.divIcon({
+                html: '<i class="fas fa-hospital" style="color: #2563eb; font-size: 32px;"></i>',
+                iconSize: [40, 40],
+                iconAnchor: [20, 40],
+                popupAnchor: [0, -40],
+                className: 'clinic-marker'
+            });
+
+            // Add marker for clinic location
+            const marker = L.marker(owerriCoords, { icon: clinicIcon }).addTo(map);
+
+            // Add popup to marker
+            marker.bindPopup(`
+        <strong>Freshdew Children Clinic</strong><br>
+        Road 5, New Owerri<br>
+        Owerri 460281<br>
+        <a href="tel:+2341234567890">+234 123 456 7890</a>
+      `).openPopup();
+
+            // Add circle for area visualization
+            L.circle(owerriCoords, {
+                color: '#2563eb',
+                fillColor: '#eff6ff',
+                fillOpacity: 0.2,
+                radius: 500
+            }).addTo(map);
+        });
+
+        // Contact Form Submission
+        const contactForm = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+
+        contactForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Show loading state
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner"></span> Sending...';
+            submitBtn.disabled = true;
+
+            // Hide previous messages
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+
+            // Simulate form submission (in real implementation, this would be a fetch request to your backend)
+            setTimeout(() => {
+                // For demo purposes, we'll simulate a successful submission
+                const isSuccess = Math.random() > 0.3; // 70% success rate for demo
+
+                if (isSuccess) {
+                    successMessage.style.display = 'flex';
+                    contactForm.reset();
+                } else {
+                    errorMessage.style.display = 'flex';
+                }
+
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+
+                // Scroll to message
+                if (isSuccess) {
+                    successMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                } else {
+                    errorMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+
+                // Auto-hide messages after 5 seconds
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                    errorMessage.style.display = 'none';
+                }, 5000);
+            }, 1500);
+        });
+
+        // FAQ Accordion
+        const faqItems = document.querySelectorAll('.faq-item');
+
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+
+            question.addEventListener('click', () => {
+                // Close all other items
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item && otherItem.classList.contains('active')) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+
+                // Toggle current item
+                item.classList.toggle('active');
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Phone number click handler for analytics (in a real implementation)
+        document.querySelectorAll('a[href^="tel:"]').forEach(phoneLink => {
+            phoneLink.addEventListener('click', function () {
+                // In a real implementation, you might want to track phone calls
+                console.log('Phone number clicked:', this.getAttribute('href'));
+            });
+        });
+
+        // Form input validation on blur
+        const formInputs = contactForm.querySelectorAll('input, textarea, select');
+        formInputs.forEach(input => {
+            input.addEventListener('blur', function () {
+                if (this.hasAttribute('required') && !this.value.trim()) {
+                    this.style.borderColor = 'var(--error)';
+                    this.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+                } else {
+                    this.style.borderColor = 'var(--border)';
+                    this.style.boxShadow = 'none';
+                }
+            });
+
+            input.addEventListener('input', function () {
+                if (this.value.trim()) {
+                    this.style.borderColor = 'var(--border)';
+                    this.style.boxShadow = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
