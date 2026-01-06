@@ -11,23 +11,22 @@
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
   <header>
     <div class="nav">
-      <a href="#" class="logo"><span>＋</span> Freshdew Children Clinic</a>
+      <a href="index.html" class="logo"><span>＋</span> Freshdew Children Clinic</a>
 
       <!-- Desktop Navigation -->
       <nav class="desktop-nav">
         <ul>
-          <li>Services</li>
-          <li>Doctors</li>
-          <li>Experience</li>
-          <li>About</li>
-          <li>Contact</li>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="contact.html">Contact</a></li>
         </ul>
         <button class="btn desktop-btn">Book Appointment</button>
       </nav>
@@ -43,11 +42,10 @@
     <!-- Mobile Navigation Menu -->
     <div class="mobile-nav" id="mobileNav">
       <ul>
-        <li>Services</li>
-        <li>Doctors</li>
-        <li>Experience</li>
-        <li>About</li>
-        <li>Contact</li>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="contact.html">Contact</a></li>
       </ul>
       <button class="mobile-appointment-btn" id="mobileAppointmentBtn">Book Appointment</button>
     </div>
@@ -220,7 +218,8 @@
         <div class="section-title">
           <h2>Meet our Pediatric Specialists</h2>
           <p>
-            Our team of certified medical professionals brings expertise, experience, and compassion to every patient interaction.
+            Our team of certified medical professionals brings expertise, experience, and compassion to every patient
+            interaction.
           </p>
         </div>
 
@@ -399,23 +398,8 @@
       });
     });
 
-    // Smooth scrolling for navigation links
-    document.querySelectorAll('.desktop-nav ul li, .mobile-nav ul li').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const targetId = link.textContent.toLowerCase();
-        const targetSection = document.querySelector(`section:not(.hero):not(.values)`);
-
-        if (targetSection) {
-          window.scrollTo({
-            top: targetSection.offsetTop - 80,
-            behavior: 'smooth'
-          });
-        }
-      });
-    });
+   
   </script>
 </body>
-
 
 </html>
