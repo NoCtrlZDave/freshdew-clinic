@@ -120,6 +120,11 @@
    width: 100%;
  }
 
+ .desktop-nav ul li a{
+  color: var(--text-muted);
+  text-decoration: none;
+ }
+
  .btn {
    background: var(--primary);
    color: white;
@@ -213,6 +218,11 @@
  .mobile-nav ul li:hover {
    color: var(--primary);
  }
+
+    .mobile-nav ul li a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
 
  .mobile-appointment-btn {
    margin-top: 20px;
